@@ -54,6 +54,12 @@
 	  <version>2.1-m05</version>
 	  <type>jar</type>
 	 </dependency>
+	 <dependency>
+	  <groupId>org.projectlombok</groupId>
+	  <artifactId>lombok</artifactId>
+	  <version>1.18.10</version>
+	  <type>jar</type>
+	 </dependency>
 	</dependencies>
 
 	<build>

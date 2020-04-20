@@ -3,11 +3,13 @@ package com.example.restservice.Models;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import lombok.Data;
 
 /**
  *
  * @author Diego Baez
  */
+@Data
 @Entity
 public class Post {
     
@@ -26,28 +28,4 @@ public class Post {
     private String title;
     private String description;
     private String city;
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }   
 }
