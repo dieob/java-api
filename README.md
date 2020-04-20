@@ -1,4 +1,4 @@
-<h2>run in command line in java-api directory:<h2>
+<h2>Run in command line in java-api directory:<h2>
 
 <h3>Maven install all dependencies</h3>
 mvn clean install
