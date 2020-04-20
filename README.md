@@ -1,7 +1,7 @@
-"# java-api" 
+<h2>run in command line in java-api directory:<h2>
 
-run in command line in source directory:
+<h3>Maven install all dependencies</h3>
+mvn clean install
 
-mvn clean install // Maven install all dependencies
-
-mvn spring-boot:run //to run the application
+<h3>Run the application</h3>
+mvn spring-boot:run
