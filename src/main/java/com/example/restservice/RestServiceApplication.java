@@ -21,7 +21,7 @@ public class RestServiceApplication {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/posts").allowedOrigins("http://181.121.178.48:3000");
+				registry.addMapping("/posts").allowedOrigins("*");
 			}
 		};
 	}
