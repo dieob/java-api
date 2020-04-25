@@ -6,6 +6,8 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
 public class RestServiceApplication {
@@ -14,6 +16,15 @@ public class RestServiceApplication {
 		SpringApplication.run(RestServiceApplication.class, args);
 	}
         
+        @Bean
+	public WebMvcConfigurer corsConfigurer() {
+		return new WebMvcConfigurer() {
+			@Override
+			public void addCorsMappings(CorsRegistry registry) {
+				registry.addMapping("/posts").allowedOrigins("http://181.121.178.48:3000");
+			}
+		};
+	}
         /*
         @Bean
         ApplicationRunner applicationRunner(PostRepository postRepository){
