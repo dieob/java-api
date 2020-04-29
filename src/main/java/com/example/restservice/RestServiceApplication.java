@@ -22,6 +22,8 @@ public class RestServiceApplication {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/posts").allowedOrigins("*");
+                                registry.addMapping("/post").allowedOrigins("*");
+                                registry.addMapping("/post/{id}").allowedOrigins("*");
 			}
 		};
 	}
