@@ -3,6 +3,7 @@ package com.example.restservice.Controllers;
 import com.example.restservice.Models.Model;
 import com.example.restservice.Models.ModelRequest;
 import com.example.restservice.Repository.ModelRepository;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
@@ -17,11 +18,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-public class ModelController {;
+public class ModelController {
+
+    ;
 
     @Autowired
     private ModelRepository modelRepository;
@@ -31,59 +36,57 @@ public class ModelController {;
 
     @GetMapping("/models")
     public List<Model> models() {
-        List<Model> retrieved  = modelRepository.findAll();
+        List<Model> retrieved = modelRepository.findAll();
         return retrieved;
     }
 
     @PostMapping("/model")
-    @ResponseBody
-    public ResponseEntity<String> createPost(@RequestBody ModelRequest request){
+    public ResponseEntity<String> createPost(@RequestParam("file") MultipartFile file, String name, String instagram, int stars) {
         Model newModel = new Model();
-        newModel.setName(request.getName());
-        newModel.setInstagram(request.getInstagram());
-        newModel.setStars(request.getStars());
-        try{
+        newModel.setName(name);
+        newModel.setInstagram(instagram);
+        newModel.setStars(stars);
+        newModel.setCreatedDate(new Date());
+        try {
             modelRepository.save(newModel);
-        } catch(Exception ex){
+        } catch (Exception ex) {
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>("Success",HttpStatus.CREATED);
+        return new ResponseEntity<>("Success", HttpStatus.CREATED);
     }
 
     @DeleteMapping("/model/{id}")
     public ResponseEntity<String> deletePost(@PathVariable Long id) {
         Optional<Model> retrieved = modelRepository.findById(id);
 
-        if (!retrieved.isPresent()){
-            return new ResponseEntity<>("Item not found",HttpStatus.NOT_FOUND);
+        if (!retrieved.isPresent()) {
+            return new ResponseEntity<>("Item not found", HttpStatus.NOT_FOUND);
         }
-        try{
+        try {
             modelRepository.delete(retrieved.get());
-        }
-        catch(Exception ex){
+        } catch (Exception ex) {
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>("Success",HttpStatus.OK);
+        return new ResponseEntity<>("Success", HttpStatus.OK);
     }
-    
+
     @PutMapping("/model/{id}")
     public ResponseEntity<String> updatePost(@PathVariable Long id, @Valid @RequestBody Model modelDetails) {
         Optional<Model> retrieved = modelRepository.findById(id);
         Model updated = new Model();
-        
-        if (!retrieved.isPresent()){
-            return new ResponseEntity<>("Item not found",HttpStatus.NOT_FOUND);
+
+        if (!retrieved.isPresent()) {
+            return new ResponseEntity<>("Item not found", HttpStatus.NOT_FOUND);
         }
-        try{
+        try {
             updated.setId(id);
             updated.setName(modelDetails.getName());
             updated.setInstagram(modelDetails.getInstagram());
             updated.setStars(modelDetails.getStars());
             modelRepository.save(updated);
-        }
-        catch(Exception ex){
+        } catch (Exception ex) {
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>("Success",HttpStatus.OK);
+        return new ResponseEntity<>("Success", HttpStatus.OK);
     }
 }

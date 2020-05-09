@@ -27,12 +27,12 @@ public class RestServiceApplication {
 			}
 		};
 	}
-        /*
+        
         @Bean
         ApplicationRunner applicationRunner(PostRepository postRepository){
             return args -> {
                 postRepository.save(new Post("Title1", "Desc1", "City1"));
                 postRepository.save(new Post("Title2", "Desc2", "City2"));
             };
-        }*/
+        }
 }

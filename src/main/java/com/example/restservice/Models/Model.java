@@ -1,5 +1,6 @@
 package com.example.restservice.Models;
 
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -36,4 +37,7 @@ public class Model {
     
     @Column
     private int stars;
+    
+    @Column
+    private Date createdDate;
 }
