@@ -2,6 +2,7 @@ package com.example.restservice.Controllers;
 
 import com.example.restservice.Models.Model;
 import com.example.restservice.Models.ModelPhoto;
+import com.example.restservice.Models.ModelReview;
 import com.example.restservice.Repository.ModelPhotoRepository;
 import com.example.restservice.Repository.ModelRepository;
 import com.example.restservice.services.ModelService;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import com.example.restservice.Repository.ModelReviewRepository;
 
 @RestController
 public class ModelController {
@@ -34,10 +36,10 @@ public class ModelController {
 
     @Autowired
     private ModelPhotoRepository modelPhotoRepository;
-
-    @PersistenceContext
-    EntityManager entityManager;
     
+    @Autowired
+    private ModelReviewRepository reviewRepository;
+
     @Autowired
     private ModelService service;
 
@@ -46,36 +48,45 @@ public class ModelController {
         List<Model> retrieved = modelRepository.findAll();
         return retrieved;
     }
-    
+
     @GetMapping("/photos")
     public List<ModelPhoto> modelsPhotos() {
         List<ModelPhoto> retrieved = modelPhotoRepository.findAll();
         return retrieved;
     }
 
+    @GetMapping("/reviews")
+    public List<ModelReview> modelsReviews() {
+        List<ModelReview> retrieved = reviewRepository.findAll();
+        return retrieved;
+    }
+
     @PostMapping("/model")
     @Transactional
-    public ResponseEntity<String> createPost(@RequestParam("file") MultipartFile file, String name, String instagram, int stars) {
-        
+    public ResponseEntity<String> createPost(@RequestParam("file") MultipartFile file, String name, String instagram, int stars, String review) {
+
         Model newModel = new Model();
-        
+
         ModelPhoto photo = new ModelPhoto();
         newModel.setName(name);
         newModel.setInstagram(instagram);
         newModel.setStars(stars);
         newModel.setCreatedDate(new Date());
+        
+        ModelReview newReview = new ModelReview();
+        newReview.setReview(review);
 
         String encodedString;
         try {
             encodedString = Base64.getEncoder().encodeToString(file.getBytes());
-            byte[] imageByte=Base64.getDecoder().decode(encodedString);
+            byte[] imageByte = Base64.getDecoder().decode(encodedString);
             photo.setImage(encodedString);
             //photo.setModel(newModel);
         } catch (Exception ex) {
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         //newModel.setPhotos(photos);
-        service.saveNewModel(newModel, photo);
+        service.saveNewModel(newModel, photo, newReview);
 
         return new ResponseEntity<>("Success", HttpStatus.CREATED);
     }

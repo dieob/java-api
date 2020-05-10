@@ -19,10 +19,9 @@ import lombok.Data;
 @Entity
 @Table(name = "models")
 public class Model {
-    
+
     public Model() {
     }
-    
 
     public Model(String name, String instagram, int stars) {
         this.name = name;
@@ -33,20 +32,24 @@ public class Model {
     @Id
     @GeneratedValue
     private Long id;
-    
+
     @Column
     private String name;
-    
+
     @Column
     private String instagram;
-    
+
     @Column
     private int stars;
-    
+
     @Column
     private Date createdDate;
-    
+
     @OneToMany(mappedBy = "model")
     @JsonIgnore
     private Set<ModelPhoto> photos;
+
+    @OneToMany(mappedBy = "model")
+    @JsonIgnore
+    private Set<ModelReview> reviews;
 }
