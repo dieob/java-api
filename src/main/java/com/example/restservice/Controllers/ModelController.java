@@ -2,6 +2,7 @@ package com.example.restservice.Controllers;
 
 import com.example.restservice.Models.Model;
 import com.example.restservice.Models.ModelPhoto;
+import com.example.restservice.Models.ModelRequest;
 import com.example.restservice.Models.ModelReview;
 import com.example.restservice.Repository.ModelPhotoRepository;
 import com.example.restservice.Repository.ModelRepository;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import com.example.restservice.Repository.ModelReviewRepository;
+import java.util.ArrayList;
 
 @RestController
 public class ModelController {
@@ -36,17 +38,48 @@ public class ModelController {
 
     @Autowired
     private ModelPhotoRepository modelPhotoRepository;
-    
+
     @Autowired
-    private ModelReviewRepository reviewRepository;
+    private ModelReviewRepository modelReviewRepository;
 
     @Autowired
     private ModelService service;
 
     @GetMapping("/models")
-    public List<Model> models() {
-        List<Model> retrieved = modelRepository.findAll();
-        return retrieved;
+    public List<ModelRequest> models() {
+        List<Model> retrievedModels = modelRepository.findAll();
+
+        List<ModelRequest> result = new ArrayList<>();
+
+        for (int i = 0; i < retrievedModels.size(); i++) {
+            ModelRequest modelRequest = new ModelRequest();
+            List<ModelPhoto> modelPhotos = new ArrayList<>();
+            List<ModelReview> modelReviews = new ArrayList<>();
+            List<String> photoList = new ArrayList<>();
+            List<String> reviewList = new ArrayList<>();
+
+            modelRequest.setId(retrievedModels.get(i).getId());
+            modelRequest.setName(retrievedModels.get(i).getName());
+            modelRequest.setInstagram(retrievedModels.get(i).getInstagram());
+            modelRequest.setStars(retrievedModels.get(i).getStars());
+
+            modelPhotos = modelPhotoRepository.findByModel(retrievedModels.get(i));
+            modelReviews = modelReviewRepository.findByModel(retrievedModels.get(i));
+
+            for (ModelPhoto photo : modelPhotos) {
+                photoList.add(photo.getImage());
+            }
+
+            for (ModelReview review : modelReviews) {
+                reviewList.add(review.getReview());
+            }
+
+            modelRequest.setPhotoList(photoList);
+            modelRequest.setReviewList(reviewList);
+
+            result.add(modelRequest);
+        }
+        return result;
     }
 
     @GetMapping("/photos")
@@ -57,7 +90,7 @@ public class ModelController {
 
     @GetMapping("/reviews")
     public List<ModelReview> modelsReviews() {
-        List<ModelReview> retrieved = reviewRepository.findAll();
+        List<ModelReview> retrieved = modelReviewRepository.findAll();
         return retrieved;
     }
 
@@ -72,7 +105,7 @@ public class ModelController {
         newModel.setInstagram(instagram);
         newModel.setStars(stars);
         newModel.setCreatedDate(new Date());
-        
+
         ModelReview newReview = new ModelReview();
         newReview.setReview(review);
 

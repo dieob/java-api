@@ -1,36 +1,19 @@
 package com.example.restservice.Models;
 
+import java.util.List;
+import lombok.Data;
+
 /**
  *
  * @author Diego Baez
  */
+@Data
 public class ModelRequest {
 
+    private Long id;
     private String name;
     private String instagram;
     private int stars;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getInstagram() {
-        return instagram;
-    }
-
-    public void setInstagram(String instagram) {
-        this.instagram = instagram;
-    }
-
-    public int getStars() {
-        return stars;
-    }
-
-    public void setStars(int stars) {
-        this.stars = stars;
-    }
+    private List<String> reviewList;
+    private List<String> photoList;
 }

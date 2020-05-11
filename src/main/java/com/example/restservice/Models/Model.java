@@ -43,6 +43,7 @@ public class Model {
     private int stars;
 
     @Column
+    @JsonIgnore
     private Date createdDate;
 
     @OneToMany(mappedBy = "model")
