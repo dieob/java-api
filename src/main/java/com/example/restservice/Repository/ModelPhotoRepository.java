@@ -12,4 +12,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ModelPhotoRepository extends JpaRepository<ModelPhoto, Long> {
     List<ModelPhoto>  findAll(); 
     List<ModelPhoto> findByModel(Model model);
+    //void saveAll(ModelPhoto[] modelPhotos);
 }

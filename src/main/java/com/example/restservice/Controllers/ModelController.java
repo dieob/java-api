@@ -29,6 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import com.example.restservice.Repository.ModelReviewRepository;
 import java.util.ArrayList;
+import javax.ws.rs.Produces;
+import org.springframework.http.MediaType;
 
 @RestController
 public class ModelController {
@@ -96,11 +98,11 @@ public class ModelController {
 
     @PostMapping("/model")
     @Transactional
-    public ResponseEntity<String> createPost(@RequestParam("file") MultipartFile file, String name, String instagram, int stars, String review) {
+    public ResponseEntity<ModelRequest> createPost(@RequestParam("file1") Optional<MultipartFile> file1,@RequestParam("file2") Optional<MultipartFile> file2,@RequestParam("file3") Optional<MultipartFile> file3, String name, String instagram, int stars, String review) {
 
         Model newModel = new Model();
 
-        ModelPhoto photo = new ModelPhoto();
+        List<ModelPhoto> photos = new ArrayList<>();
         newModel.setName(name);
         newModel.setInstagram(instagram);
         newModel.setStars(stars);
@@ -110,18 +112,31 @@ public class ModelController {
         newReview.setReview(review);
 
         String encodedString;
+        List<String> encodedPhotos = new ArrayList<>();
         try {
-            encodedString = Base64.getEncoder().encodeToString(file.getBytes());
-            byte[] imageByte = Base64.getDecoder().decode(encodedString);
-            photo.setImage(encodedString);
-            //photo.setModel(newModel);
+            if(file1.isPresent()){
+                encodedString = Base64.getEncoder().encodeToString(file1.get().getBytes());
+                photos.add(new ModelPhoto(encodedString, null));
+                encodedPhotos.add(encodedString);
+            }
+            if(file2.isPresent()){
+                encodedString = Base64.getEncoder().encodeToString(file2.get().getBytes());
+                photos.add(new ModelPhoto(encodedString, null));
+                encodedPhotos.add(encodedString);
+            }
+            if(file3.isPresent()){
+                encodedString = Base64.getEncoder().encodeToString(file3.get().getBytes());
+                photos.add(new ModelPhoto(encodedString, null));
+                encodedPhotos.add(encodedString);
+            }
+            
         } catch (Exception ex) {
-            return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        //newModel.setPhotos(photos);
-        service.saveNewModel(newModel, photo, newReview);
+        
+        ModelRequest createdModel = service.saveNewModel(newModel, photos, newReview, encodedPhotos, review);
 
-        return new ResponseEntity<>("Success", HttpStatus.CREATED);
+        return new ResponseEntity<>(createdModel, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/model/{id}")
