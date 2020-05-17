@@ -14,6 +14,6 @@ public class ModelRequest {
     private String name;
     private String instagram;
     private int stars;
-    private List<String> reviewList;
+    private List<ModelReview> reviewList;
     private List<String> photoList;
 }

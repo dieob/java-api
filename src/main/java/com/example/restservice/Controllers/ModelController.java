@@ -11,8 +11,6 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +27,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import com.example.restservice.Repository.ModelReviewRepository;
 import java.util.ArrayList;
-import javax.ws.rs.Produces;
-import org.springframework.http.MediaType;
 
 @RestController
 public class ModelController {
@@ -48,7 +44,7 @@ public class ModelController {
     private ModelService service;
 
     @GetMapping("/models")
-    public List<ModelRequest> models() {
+    public ResponseEntity<List<ModelRequest>> models() {
         List<Model> retrievedModels = modelRepository.findAll();
 
         List<ModelRequest> result = new ArrayList<>();
@@ -58,7 +54,7 @@ public class ModelController {
             List<ModelPhoto> modelPhotos = new ArrayList<>();
             List<ModelReview> modelReviews = new ArrayList<>();
             List<String> photoList = new ArrayList<>();
-            List<String> reviewList = new ArrayList<>();
+            List<ModelReview> reviewList = new ArrayList<>();
 
             modelRequest.setId(retrievedModels.get(i).getId());
             modelRequest.setName(retrievedModels.get(i).getName());
@@ -73,7 +69,7 @@ public class ModelController {
             }
 
             for (ModelReview review : modelReviews) {
-                reviewList.add(review.getReview());
+                reviewList.add(review);
             }
 
             modelRequest.setPhotoList(photoList);
@@ -81,7 +77,82 @@ public class ModelController {
 
             result.add(modelRequest);
         }
-        return result;
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+    
+        @GetMapping("/model/{id}")
+        public ResponseEntity<ModelRequest> getSingleModel(@PathVariable Long id) {
+        Optional<Model> retrievedModel = modelRepository.findById(id);
+
+        if (!retrievedModel.isPresent()){
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND); 
+        }
+
+            ModelRequest modelRequest = new ModelRequest();
+            List<ModelPhoto> modelPhotos = new ArrayList<>();
+            List<ModelReview> modelReviews = new ArrayList<>();
+            List<String> photoList = new ArrayList<>();
+            List<ModelReview> reviewList = new ArrayList<>();
+
+            modelRequest.setId(retrievedModel.get().getId());
+            modelRequest.setName(retrievedModel.get().getName());
+            modelRequest.setInstagram(retrievedModel.get().getInstagram());
+            modelRequest.setStars(retrievedModel.get().getStars());
+
+            modelPhotos = modelPhotoRepository.findByModel(retrievedModel.get());
+            modelReviews = modelReviewRepository.findByModel(retrievedModel.get());
+
+            for (ModelPhoto photo : modelPhotos) {
+                photoList.add(photo.getImage());
+            }
+
+            for (ModelReview review : modelReviews) {
+                reviewList.add(review);
+            }
+
+            modelRequest.setPhotoList(photoList);
+            modelRequest.setReviewList(reviewList);
+
+            
+        return new ResponseEntity<>(modelRequest, HttpStatus.OK);
+    }
+    
+    @GetMapping("/bestmodels")
+    public ResponseEntity<List<ModelRequest>> bestModels() {
+        List<Model> retrievedModels = modelRepository.findTop3ByOrderByStarsDesc();
+
+        List<ModelRequest> result = new ArrayList<>();
+
+        for (int i = 0; i < retrievedModels.size(); i++) {
+            ModelRequest modelRequest = new ModelRequest();
+            List<ModelPhoto> modelPhotos = new ArrayList<>();
+            List<ModelReview> modelReviews = new ArrayList<>();
+            List<String> photoList = new ArrayList<>();
+            List<ModelReview> reviewList = new ArrayList<>();
+
+            modelRequest.setId(retrievedModels.get(i).getId());
+            modelRequest.setName(retrievedModels.get(i).getName());
+            modelRequest.setInstagram(retrievedModels.get(i).getInstagram());
+            modelRequest.setStars(retrievedModels.get(i).getStars());
+
+            modelPhotos = modelPhotoRepository.findByModel(retrievedModels.get(i));
+            modelReviews = modelReviewRepository.findByModel(retrievedModels.get(i));
+
+            for (ModelPhoto photo : modelPhotos) {
+                photoList.add(photo.getImage());
+            }
+
+            for (ModelReview review : modelReviews) {
+                reviewList.add(review);
+            }
+
+            modelRequest.setPhotoList(photoList);
+            modelRequest.setReviewList(reviewList);
+
+            result.add(modelRequest);
+        }
+        
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @GetMapping("/photos")
@@ -94,6 +165,25 @@ public class ModelController {
     public List<ModelReview> modelsReviews() {
         List<ModelReview> retrieved = modelReviewRepository.findAll();
         return retrieved;
+    }
+    
+    @PostMapping("/review")
+    @Transactional
+    public ResponseEntity<ModelReview> createReview(String review, Long modelId, int stars){
+        
+        Optional<Model> retrievedModel = modelRepository.findById(modelId);
+        ModelReview newReview = new ModelReview();
+        if(retrievedModel.isPresent()){
+            newReview.setReview(review);
+            newReview.setStars(stars);
+            retrievedModel.get().setStars(service.calculateStars(retrievedModel.get(), stars));
+            newReview.setModel(retrievedModel.get());
+            newReview.setCreatedDate(new Date());
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        ModelReview savedReview = service.saveNewReview(newReview, retrievedModel.get());
+        return new ResponseEntity<>(savedReview, HttpStatus.OK);
     }
 
     @PostMapping("/model")
@@ -110,6 +200,8 @@ public class ModelController {
 
         ModelReview newReview = new ModelReview();
         newReview.setReview(review);
+        newReview.setCreatedDate(new Date());
+        newReview.setStars(stars);
 
         String encodedString;
         List<String> encodedPhotos = new ArrayList<>();
@@ -134,7 +226,7 @@ public class ModelController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         
-        ModelRequest createdModel = service.saveNewModel(newModel, photos, newReview, encodedPhotos, review);
+        ModelRequest createdModel = service.saveNewModel(newModel, photos, newReview, encodedPhotos);
 
         return new ResponseEntity<>(createdModel, HttpStatus.CREATED);
     }

@@ -5,6 +5,8 @@
  */
 package com.example.restservice.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -28,18 +30,26 @@ public class ModelReview {
     private Long id;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "model_id", nullable = false)
     private Model model;
 
     @Column
     private String review;
+    
+    @Column
+    private int stars;
+    
+    @Column
+    private Date createdDate;
 
     public ModelReview() {
     }
 
-    public ModelReview(String review, Model model) {
+    public ModelReview(String review, Model model, int stars) {
         this.review = review;
         this.model = model;
+        this.stars = stars;
     }
 
 }

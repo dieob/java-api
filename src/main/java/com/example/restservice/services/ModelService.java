@@ -36,7 +36,7 @@ public class ModelService {
     ModelReviewRepository modelReviewRepository;
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public ModelRequest saveNewModel(Model model, List<ModelPhoto> modelPhotos, ModelReview modelReview, List<String> encodedPhotos, String review) {
+    public ModelRequest saveNewModel(Model model, List<ModelPhoto> modelPhotos, ModelReview modelReview, List<String> encodedPhotos) {
         
         modelRepository.save(model);
         for(ModelPhoto photo : modelPhotos){
@@ -47,8 +47,8 @@ public class ModelService {
         modelReviewRepository.save(modelReview);
         
         ModelRequest result = new ModelRequest();
-        List<String> reviewsToList = new ArrayList<>();
-        reviewsToList.add(review);
+        List<ModelReview> reviewsToList = new ArrayList<>();
+        reviewsToList.add(modelReview);
         result.setId(model.getId());
         result.setName(model.getName());
         result.setInstagram(model.getInstagram());
@@ -58,4 +58,25 @@ public class ModelService {
         
         return result;
     }
+    
+    @Transactional(Transactional.TxType.REQUIRED)
+    public ModelReview saveNewReview(ModelReview review, Model updatedModel){
+        modelReviewRepository.save(review);
+        modelRepository.save(updatedModel);
+        return review;
+    }
+    
+    public int calculateStars(Model model, int stars){
+        List<ModelReview> modelsReviews = modelReviewRepository.findByModel(model);
+        
+        int sum = 0;
+        int result = 0;
+        for (ModelReview review : modelsReviews){
+            sum = sum + review.getStars();
+        }
+        
+        result = (sum + stars)/(modelsReviews.size()+1);
+        return result;
+    }
+    
 }
