@@ -16,4 +16,5 @@ public class ModelRequest {
     private int stars;
     private List<ModelReview> reviewList;
     private List<String> photoList;
+    private String gender;
 }

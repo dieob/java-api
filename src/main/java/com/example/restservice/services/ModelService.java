@@ -55,6 +55,7 @@ public class ModelService {
         result.setStars(model.getStars());
         result.setPhotoList(encodedPhotos);
         result.setReviewList(reviewsToList);
+        result.setGender(model.getGender());
         
         return result;
     }

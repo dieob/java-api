@@ -41,6 +41,9 @@ public class Model {
 
     @Column
     private int stars;
+    
+    @Column
+    private String gender;
 
     @Column
     @JsonIgnore

@@ -60,6 +60,7 @@ public class ModelController {
             modelRequest.setName(retrievedModels.get(i).getName());
             modelRequest.setInstagram(retrievedModels.get(i).getInstagram());
             modelRequest.setStars(retrievedModels.get(i).getStars());
+            modelRequest.setGender(retrievedModels.get(i).getGender());
 
             modelPhotos = modelPhotoRepository.findByModel(retrievedModels.get(i));
             modelReviews = modelReviewRepository.findByModel(retrievedModels.get(i));
@@ -134,6 +135,7 @@ public class ModelController {
             modelRequest.setName(retrievedModels.get(i).getName());
             modelRequest.setInstagram(retrievedModels.get(i).getInstagram());
             modelRequest.setStars(retrievedModels.get(i).getStars());
+            modelRequest.setGender(retrievedModels.get(i).getGender());
 
             modelPhotos = modelPhotoRepository.findByModel(retrievedModels.get(i));
             modelReviews = modelReviewRepository.findByModel(retrievedModels.get(i));
@@ -188,7 +190,7 @@ public class ModelController {
 
     @PostMapping("/model")
     @Transactional
-    public ResponseEntity<ModelRequest> createPost(@RequestParam("file1") Optional<MultipartFile> file1,@RequestParam("file2") Optional<MultipartFile> file2,@RequestParam("file3") Optional<MultipartFile> file3, String name, String instagram, int stars, String review) {
+    public ResponseEntity<ModelRequest> createPost(@RequestParam("file1") Optional<MultipartFile> file1,@RequestParam("file2") Optional<MultipartFile> file2,@RequestParam("file3") Optional<MultipartFile> file3, String name, String instagram, int stars, String review, String gender) {
 
         Model newModel = new Model();
 
@@ -197,6 +199,7 @@ public class ModelController {
         newModel.setInstagram(instagram);
         newModel.setStars(stars);
         newModel.setCreatedDate(new Date());
+        newModel.setGender(gender);
 
         ModelReview newReview = new ModelReview();
         newReview.setReview(review);
