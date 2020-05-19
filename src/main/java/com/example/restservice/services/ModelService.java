@@ -52,6 +52,7 @@ public class ModelService {
         result.setId(model.getId());
         result.setName(model.getName());
         result.setInstagram(model.getInstagram());
+        result.setTwitter(model.getTwitter());
         result.setStars(model.getStars());
         result.setPhotoList(encodedPhotos);
         result.setReviewList(reviewsToList);

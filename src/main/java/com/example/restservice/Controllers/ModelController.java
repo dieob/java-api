@@ -4,6 +4,7 @@ import com.example.restservice.Models.Model;
 import com.example.restservice.Models.ModelPhoto;
 import com.example.restservice.Models.ModelRequest;
 import com.example.restservice.Models.ModelReview;
+import com.example.restservice.Models.PremiumModel;
 import com.example.restservice.Repository.ModelPhotoRepository;
 import com.example.restservice.Repository.ModelRepository;
 import com.example.restservice.services.ModelService;
@@ -26,7 +27,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import com.example.restservice.Repository.ModelReviewRepository;
+import com.example.restservice.Repository.PremiumModelRepository;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @RestController
 public class ModelController {
@@ -39,6 +44,9 @@ public class ModelController {
 
     @Autowired
     private ModelReviewRepository modelReviewRepository;
+    
+    @Autowired
+    private PremiumModelRepository premiumModelRepository;
 
     @Autowired
     private ModelService service;
@@ -59,6 +67,7 @@ public class ModelController {
             modelRequest.setId(retrievedModels.get(i).getId());
             modelRequest.setName(retrievedModels.get(i).getName());
             modelRequest.setInstagram(retrievedModels.get(i).getInstagram());
+            modelRequest.setTwitter(retrievedModels.get(i).getTwitter());
             modelRequest.setStars(retrievedModels.get(i).getStars());
             modelRequest.setGender(retrievedModels.get(i).getGender());
 
@@ -98,7 +107,9 @@ public class ModelController {
             modelRequest.setId(retrievedModel.get().getId());
             modelRequest.setName(retrievedModel.get().getName());
             modelRequest.setInstagram(retrievedModel.get().getInstagram());
+            modelRequest.setTwitter(retrievedModel.get().getTwitter());
             modelRequest.setStars(retrievedModel.get().getStars());
+            modelRequest.setGender(retrievedModel.get().getGender());
 
             modelPhotos = modelPhotoRepository.findByModel(retrievedModel.get());
             modelReviews = modelReviewRepository.findByModel(retrievedModel.get());
@@ -134,6 +145,7 @@ public class ModelController {
             modelRequest.setId(retrievedModels.get(i).getId());
             modelRequest.setName(retrievedModels.get(i).getName());
             modelRequest.setInstagram(retrievedModels.get(i).getInstagram());
+            modelRequest.setTwitter(retrievedModels.get(i).getTwitter());
             modelRequest.setStars(retrievedModels.get(i).getStars());
             modelRequest.setGender(retrievedModels.get(i).getGender());
 
@@ -157,6 +169,39 @@ public class ModelController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @GetMapping("/premiummodels")
+    public ResponseEntity<List<PremiumModel>> premiumModels() {
+        List<PremiumModel> retrievedModels = premiumModelRepository.findAll();
+        
+        return new ResponseEntity<>(retrievedModels, HttpStatus.OK);
+    }
+    
+    @PostMapping("/premiummodel")
+    @Transactional
+    public ResponseEntity<PremiumModel> createPremium(@RequestParam("file1") Optional<MultipartFile> file1, String name, String instagram, String twitter, String title, String message, ArrayList<String> links){
+        PremiumModel premiumModel = new PremiumModel();
+        
+        premiumModel.setName(name);
+        premiumModel.setInstagram(instagram);
+        premiumModel.setTwitter(twitter);
+        premiumModel.setLinks(links);
+        premiumModel.setTitle(title);
+        premiumModel.setMessage(message);
+        
+        try {
+            String encodedString = Base64.getEncoder().encodeToString(file1.get().getBytes());
+            premiumModel.setInstagram(encodedString);
+        } catch (IOException ex) {
+            Logger.getLogger(ModelController.class.getName()).log(Level.SEVERE, null, ex);
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        
+        
+        premiumModelRepository.save(premiumModel);
+        
+        return new ResponseEntity<>(premiumModel, HttpStatus.OK);
+    }
+    
     @GetMapping("/photos")
     public List<ModelPhoto> modelsPhotos() {
         List<ModelPhoto> retrieved = modelPhotoRepository.findAll();
@@ -187,16 +232,62 @@ public class ModelController {
         ModelReview savedReview = service.saveNewReview(newReview, retrievedModel.get());
         return new ResponseEntity<>(savedReview, HttpStatus.OK);
     }
+    
+    private String checkSocial(String username){
+        if (username.substring(0, 1).equals("@")){
+            return username.substring(1, username.length());
+        } else{
+            return (username);
+        }
+    }
+    
+    private String checkName(String name){
+        String[] words = name.split(" ");
+        String currentWord = "";
+        String result = "";
+        String wordCopy ="";
+        
+        for (String word : words){
+            if(word.length() > 1){
+                wordCopy  = word.substring(1, word.length());
+            } else if(word.length()==1){
+                wordCopy = "";
+            }
+
+            if(word.length()==0){
+                currentWord = "";
+            } else {
+                if(!Character.isUpperCase(word.codePointAt(0))){
+                    currentWord = word.subSequence(0, 1).toString().toUpperCase() + wordCopy;
+                } else {
+                    currentWord = word;
+                }
+            }
+            result = result + " " + currentWord;
+        }
+        
+        return result;
+    }
 
     @PostMapping("/model")
     @Transactional
-    public ResponseEntity<ModelRequest> createPost(@RequestParam("file1") Optional<MultipartFile> file1,@RequestParam("file2") Optional<MultipartFile> file2,@RequestParam("file3") Optional<MultipartFile> file3, String name, String instagram, int stars, String review, String gender) {
+    public ResponseEntity<ModelRequest> createPost(@RequestParam("file1") Optional<MultipartFile> file1,@RequestParam("file2") Optional<MultipartFile> file2,@RequestParam("file3") Optional<MultipartFile> file3, String name, String instagram, String twitter, int stars, String review, String gender) {
 
         Model newModel = new Model();
 
         List<ModelPhoto> photos = new ArrayList<>();
-        newModel.setName(name);
-        newModel.setInstagram(instagram);
+        newModel.setName(checkName(name));
+        if(instagram.length() > 0){
+            newModel.setInstagram(checkSocial(instagram));
+        } else {
+            newModel.setInstagram("Not available");
+        }
+        
+        if(twitter.length()>0){
+            newModel.setTwitter(checkSocial(twitter));
+        } else {
+            newModel.setTwitter("Not available");
+        }
         newModel.setStars(stars);
         newModel.setCreatedDate(new Date());
         newModel.setGender(gender);
