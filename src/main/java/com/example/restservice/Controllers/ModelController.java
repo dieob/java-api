@@ -177,13 +177,15 @@ public class ModelController {
     }
     
     @PostMapping("/premiummodel")
-    public ResponseEntity<PremiumModel> createPremium(@RequestParam("file1") Optional<MultipartFile> file1, String name, String instagram, String twitter, String title, String message, ArrayList<String> links){
+    public ResponseEntity<PremiumModel> createPremium(@RequestParam("file1") Optional<MultipartFile> file1, String name, String instagram, String twitter, String title, String message, String onlyfansLink, String justForFansLink){
         PremiumModel premiumModel = new PremiumModel();
-        
+        ArrayList<String> linkList = new ArrayList<>();
+        linkList.add(onlyfansLink);
+        linkList.add(justForFansLink);
         premiumModel.setName(name);
         premiumModel.setInstagram(instagram);
         premiumModel.setTwitter(twitter);
-        premiumModel.setLinks(links);
+        premiumModel.setLinks(linkList);
         premiumModel.setTitle(title);
         premiumModel.setMessage(message);
         
