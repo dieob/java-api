@@ -177,7 +177,6 @@ public class ModelController {
     }
     
     @PostMapping("/premiummodel")
-    @Transactional
     public ResponseEntity<PremiumModel> createPremium(@RequestParam("file1") Optional<MultipartFile> file1, String name, String instagram, String twitter, String title, String message, ArrayList<String> links){
         PremiumModel premiumModel = new PremiumModel();
         
@@ -190,7 +189,7 @@ public class ModelController {
         
         try {
             String encodedString = Base64.getEncoder().encodeToString(file1.get().getBytes());
-            premiumModel.setInstagram(encodedString);
+            premiumModel.setImage(encodedString);
         } catch (IOException ex) {
             Logger.getLogger(ModelController.class.getName()).log(Level.SEVERE, null, ex);
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -199,7 +198,7 @@ public class ModelController {
         
         premiumModelRepository.save(premiumModel);
         
-        return new ResponseEntity<>(premiumModel, HttpStatus.OK);
+        return new ResponseEntity<>(premiumModel, HttpStatus.CREATED);
     }
     
     @GetMapping("/photos")
