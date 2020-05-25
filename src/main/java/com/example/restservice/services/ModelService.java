@@ -62,23 +62,80 @@ public class ModelService {
     }
     
     @Transactional(Transactional.TxType.REQUIRED)
-    public ModelReview saveNewReview(ModelReview review, Model updatedModel){
+    public ModelReview saveNewReview(ModelReview review, Model modelToUpdate){
         modelReviewRepository.save(review);
-        modelRepository.save(updatedModel);
+        
+        //recalculate rating of model with this newly saved review and update
+        modelToUpdate.setStars(calculateStarsMean(modelToUpdate));
+        modelToUpdate.setRank(ratingFormula(modelToUpdate));
+        modelRepository.save(modelToUpdate);
+        
         return review;
     }
     
-    public int calculateStars(Model model, int stars){
+    private Double calculateStarsMean(Model model){
         List<ModelReview> modelsReviews = modelReviewRepository.findByModel(model);
         
-        int sum = 0;
-        int result = 0;
+        Double sum = 0.0;
+        Double result = 0.0;
         for (ModelReview review : modelsReviews){
             sum = sum + review.getStars();
         }
         
-        result = (sum + stars)/(modelsReviews.size()+1);
+        result = (sum)/(modelsReviews.size());
         return result;
+    }
+    
+    public Double ratingFormula(Model model){
+        
+        //Formula: (R * v + C * m) / (v + m)
+        //R= stars mean (of model)
+        //C= R mean (of all)
+        //v=number of reviews of model
+        //m=minimum reviews to be considered
+    
+        List<Model> allModels = modelRepository.findAll();
+        List<ModelReview> modelsReviews = modelReviewRepository.findByModel(model);
+        ArrayList<Double> modelsRmean = new ArrayList<>();
+        //Calculate R
+        Double iterativeR; //to get R for all models for next step
+        for (Model model1 : allModels){
+            iterativeR = calculateStarsMean(model1);
+            modelsRmean.add(iterativeR);
+        }
+        
+        Double R = calculateStarsMean(model); //current model stars mean
+        
+        //Calculate C
+        Double sum = 0.0;
+        Double C = 0.0;
+        for (Double r : modelsRmean){
+            sum = sum+r;
+        }
+        
+        C = sum/modelsRmean.size();
+        
+        //calculate v
+        int v = modelsReviews.size();
+        
+        //set value for m
+        int m = 10;
+        
+        Double rating = ((R*v)+(C*m))/(v+m);
+        
+        return rating;
+        
+    }
+    
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void updateAllRanks(){
+        List<Model> allModels = modelRepository.findAll();
+        
+        for(Model model: allModels){
+            model.setRank(ratingFormula(model));
+        }
+        
+        modelRepository.saveAll(allModels);
     }
     
 }

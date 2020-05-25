@@ -34,7 +34,7 @@ public class ModelReview {
     @JoinColumn(name = "model_id", nullable = false)
     private Model model;
 
-    @Column
+    @Column(columnDefinition = "LONGTEXT")
     private String review;
     
     @Column

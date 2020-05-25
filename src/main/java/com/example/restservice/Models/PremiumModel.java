@@ -45,7 +45,7 @@ public class PremiumModel implements Serializable {
     @Column 
     private String title; 
     
-    @Column 
+    @Column(columnDefinition = "LONGTEXT")
     private String message;
     
     @Column(columnDefinition = "LONGTEXT")

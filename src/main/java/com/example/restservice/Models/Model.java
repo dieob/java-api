@@ -24,7 +24,7 @@ public class Model implements Serializable {
     public Model() {
     }
 
-    public Model(String name, String instagram, String twitter, String gender, int stars) {
+    public Model(String name, String instagram, String twitter, String gender, Double stars) {
         this.name = name;
         this.instagram = instagram;
         this.stars = stars;
@@ -46,10 +46,14 @@ public class Model implements Serializable {
     private String twitter;
 
     @Column
-    private int stars;
+    private Double stars;
+    
+    @Column
+    private Double rank;
     
     @Column
     private String gender;
+    
 
     @Column
     @JsonIgnore

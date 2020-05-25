@@ -70,6 +70,7 @@ public class ModelController {
             modelRequest.setTwitter(retrievedModels.get(i).getTwitter());
             modelRequest.setStars(retrievedModels.get(i).getStars());
             modelRequest.setGender(retrievedModels.get(i).getGender());
+            modelRequest.setRank(retrievedModels.get(i).getRank());
 
             modelPhotos = modelPhotoRepository.findByModel(retrievedModels.get(i));
             modelReviews = modelReviewRepository.findByModel(retrievedModels.get(i));
@@ -131,7 +132,11 @@ public class ModelController {
     
     @GetMapping("/bestmodels")
     public ResponseEntity<List<ModelRequest>> bestModels() {
-        List<Model> retrievedModels = modelRepository.findTop3ByOrderByStarsDesc();
+        
+        //call service that updates rank for all models
+        service.updateAllRanks();
+        
+        List<Model> retrievedModels = modelRepository.findTop10ByOrderByRankDesc();
 
         List<ModelRequest> result = new ArrayList<>();
 
@@ -148,6 +153,7 @@ public class ModelController {
             modelRequest.setTwitter(retrievedModels.get(i).getTwitter());
             modelRequest.setStars(retrievedModels.get(i).getStars());
             modelRequest.setGender(retrievedModels.get(i).getGender());
+            modelRequest.setRank(retrievedModels.get(i).getRank());
 
             modelPhotos = modelPhotoRepository.findByModel(retrievedModels.get(i));
             modelReviews = modelReviewRepository.findByModel(retrievedModels.get(i));
@@ -182,7 +188,7 @@ public class ModelController {
         ArrayList<String> linkList = new ArrayList<>();
         linkList.add(onlyfansLink);
         linkList.add(justForFansLink);
-        premiumModel.setName(name);
+        premiumModel.setName(checkName(name));
         premiumModel.setInstagram(instagram);
         premiumModel.setTwitter(twitter);
         premiumModel.setLinks(linkList);
@@ -224,7 +230,6 @@ public class ModelController {
         if(retrievedModel.isPresent()){
             newReview.setReview(review);
             newReview.setStars(stars);
-            retrievedModel.get().setStars(service.calculateStars(retrievedModel.get(), stars));
             newReview.setModel(retrievedModel.get());
             newReview.setCreatedDate(new Date());
         } else {
@@ -289,7 +294,8 @@ public class ModelController {
         } else {
             newModel.setTwitter("Not available");
         }
-        newModel.setStars(stars);
+        newModel.setStars(Double.valueOf(stars));
+        newModel.setRank(0.0); //initialize new items with no rank
         newModel.setCreatedDate(new Date());
         newModel.setGender(gender);
 

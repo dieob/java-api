@@ -12,5 +12,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ModelRepository extends JpaRepository<Model, Long> {
     List<Model> findAll();
     Optional<Model> findById(Long Id);
-    List<Model> findTop3ByOrderByStarsDesc();
+    List<Model> findTop10ByOrderByRankDesc();
 }
