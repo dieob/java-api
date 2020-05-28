@@ -32,6 +32,7 @@ public class RestServiceApplication {
                 registry.addMapping("/premiummodel").allowedOrigins("*");
                 registry.addMapping("/premiummodels").allowedOrigins("*");
                 registry.addMapping("/sendemail").allowedOrigins("*");
+                registry.addMapping("/contact").allowedOrigins("*");
             }
         };
     }

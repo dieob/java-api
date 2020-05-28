@@ -5,8 +5,12 @@
  */
 package com.example.restservice.Controllers;
 
+import com.example.restservice.Models.ContactMessage;
+import com.example.restservice.Models.PremiumModel;
+import com.example.restservice.Repository.ContactMessageRepository;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,8 +25,10 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,6 +39,25 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class EmailController {
    
+   @Autowired
+   ContactMessageRepository contactMessageRepository;
+           
+   @PostMapping("/contact")
+   public ResponseEntity<String> contactForm(String email, String message) {
+       ContactMessage contactMessage = new ContactMessage(email, message);
+       
+       contactMessageRepository.save(contactMessage);
+      
+      return new ResponseEntity<>("Contact form received", HttpStatus.OK);
+   }  
+   
+    @GetMapping("/messages")
+    public ResponseEntity<List<ContactMessage>> messages() {
+        List<ContactMessage> retrievedMessages = contactMessageRepository.findAll();
+        
+        return new ResponseEntity<>(retrievedMessages, HttpStatus.OK);
+    }
+    
     
    @PostMapping("/sendemail")
    public ResponseEntity<String> sendEmail(String email, String message) {
