@@ -27,7 +27,7 @@ public class RestServiceApplication {
                 registry.addMapping("/models").allowedOrigins("*");
                 registry.addMapping("/model").allowedOrigins("*");
                 registry.addMapping("/model/{id}").allowedOrigins("*");
-                registry.addMapping("/bestmodels").allowedOrigins("*");
+                registry.addMapping("/bestmodels/{gender}").allowedOrigins("*");
                 registry.addMapping("/review").allowedOrigins("*");
                 registry.addMapping("/premiummodel").allowedOrigins("*");
                 registry.addMapping("/premiummodels").allowedOrigins("*");

@@ -130,14 +130,19 @@ public class ModelController {
         return new ResponseEntity<>(modelRequest, HttpStatus.OK);
     }
     
-    @GetMapping("/bestmodels")
-    public ResponseEntity<List<ModelRequest>> bestModels() {
+    @GetMapping("/bestmodels/{gender}")
+    public ResponseEntity<List<ModelRequest>> bestModels(@PathVariable String gender) {
         
+        List<Model> retrievedModels;
         //call service that updates rank for all models
         service.updateAllRanks();
         
-        List<Model> retrievedModels = modelRepository.findTop10ByOrderByRankDesc();
-
+        if(gender.equals("All")){
+                retrievedModels = modelRepository.findTop10ByOrderByRankDesc();
+        } else {
+                retrievedModels = modelRepository.findBestModels(gender);
+        }
+        
         List<ModelRequest> result = new ArrayList<>();
 
         for (int i = 0; i < retrievedModels.size(); i++) {
@@ -270,6 +275,10 @@ public class ModelController {
                 }
             }
             result = result + " " + currentWord;
+        }
+        
+        if(!Character.isUpperCase(result.codePointAt(0))){
+            result = result.substring(1, result.length());
         }
         
         return result;
