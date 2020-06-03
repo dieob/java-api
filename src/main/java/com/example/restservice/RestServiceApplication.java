@@ -30,7 +30,7 @@ public class RestServiceApplication {
                 registry.addMapping("/bestmodels/{gender}").allowedOrigins("*");
                 registry.addMapping("/review").allowedOrigins("*");
                 registry.addMapping("/premiummodel").allowedOrigins("*");
-                registry.addMapping("/premiummodels").allowedOrigins("*");
+                registry.addMapping("/premiummodels/{gender}").allowedOrigins("*");
                 registry.addMapping("/sendemail").allowedOrigins("*");
                 registry.addMapping("/contact").allowedOrigins("*");
             }

@@ -30,6 +30,7 @@ import com.example.restservice.Repository.ModelReviewRepository;
 import com.example.restservice.Repository.PremiumModelRepository;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -177,18 +178,31 @@ public class ModelController {
             result.add(modelRequest);
         }
         
+        if(result.size() > 10){
+            result = result.subList(0, 10);
+        }
+        
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("/premiummodels")
-    public ResponseEntity<List<PremiumModel>> premiumModels() {
-        List<PremiumModel> retrievedModels = premiumModelRepository.findAll();
+    @GetMapping("/premiummodels/{gender}")
+    public ResponseEntity<List<PremiumModel>> premiumModels(@PathVariable String gender) {
+        
+        List<PremiumModel> retrievedModels;
+        
+        if(gender.equals("All")){
+                retrievedModels = premiumModelRepository.findAll();
+        } else {
+                retrievedModels = premiumModelRepository.findByGender(gender);
+        }
+        
+        Collections.shuffle(retrievedModels);
         
         return new ResponseEntity<>(retrievedModels, HttpStatus.OK);
     }
     
     @PostMapping("/premiummodel")
-    public ResponseEntity<PremiumModel> createPremium(@RequestParam("file1") Optional<MultipartFile> file1, String name, String instagram, String twitter, String title, String message, String onlyfansLink, String justForFansLink){
+    public ResponseEntity<PremiumModel> createPremium(@RequestParam("file1") Optional<MultipartFile> file1, String name, String instagram, String twitter, String title, String message, String onlyfansLink, String justForFansLink, String gender){
         PremiumModel premiumModel = new PremiumModel();
         ArrayList<String> linkList = new ArrayList<>();
         linkList.add(onlyfansLink);
@@ -199,6 +213,7 @@ public class ModelController {
         premiumModel.setLinks(linkList);
         premiumModel.setTitle(title);
         premiumModel.setMessage(message);
+        premiumModel.setGender(gender);
         
         try {
             String encodedString = Base64.getEncoder().encodeToString(file1.get().getBytes());

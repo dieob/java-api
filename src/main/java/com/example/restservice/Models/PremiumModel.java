@@ -32,6 +32,9 @@ public class PremiumModel implements Serializable {
 
     @Column
     private String name;
+    
+    @Column
+    private String gender;
 
     @Column
     private String instagram;

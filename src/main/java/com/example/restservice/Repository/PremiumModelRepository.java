@@ -12,4 +12,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface PremiumModelRepository extends JpaRepository<PremiumModel, Long> {
     List<PremiumModel> findAll();
     Optional<PremiumModel> findById(Long Id);
+    List<PremiumModel> findByGender(String gender);
 }
