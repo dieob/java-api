@@ -58,4 +58,12 @@ public class Model implements Serializable {
     @Column
     @JsonIgnore
     private Date createdDate;
+
+    @OneToMany(mappedBy = "model")
+    @JsonIgnore
+    private Set<ModelPhoto> photos;
+
+    @OneToMany(mappedBy = "model")
+    @JsonIgnore
+    private Set<ModelReview> reviews;
 }

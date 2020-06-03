@@ -348,6 +348,7 @@ public class ModelController {
             }
             
         } catch (Exception ex) {
+            Logger.getLogger(ModelController.class.getName()).log(Level.SEVERE, null, ex);
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         
