@@ -22,6 +22,7 @@ import lombok.Data;
  */
 @Data
 @Entity
+@Table (name="reviews")
 public class ModelReview {
 
     @Id
