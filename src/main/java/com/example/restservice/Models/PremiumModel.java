@@ -20,7 +20,6 @@ import lombok.Data;
  */
 @Data
 @Entity
-@Table(name = "premium_models")
 public class PremiumModel implements Serializable {
     
     public PremiumModel() {
