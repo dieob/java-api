@@ -61,7 +61,7 @@ public class Model implements Serializable {
 
     @OneToMany(mappedBy = "model")
     @JsonIgnore
-    private Set<ModelPhoto> photos;
+    private Set<ModelPhoto> photoList;
 
     @OneToMany(mappedBy = "model")
     @JsonIgnore
