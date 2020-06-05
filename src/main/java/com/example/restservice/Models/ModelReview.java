@@ -25,6 +25,15 @@ import lombok.Data;
 @Table (name="reviews")
 public class ModelReview {
 
+    public ModelReview() {
+    }
+
+    public ModelReview(String review, Model model, int stars) {
+        this.review = review;
+        this.model = model;
+        this.stars = stars;
+    }
+    
     @Id
     @GeneratedValue
     private Long id;
@@ -42,14 +51,5 @@ public class ModelReview {
     
     @Column
     private Date createdDate;
-
-    public ModelReview() {
-    }
-
-    public ModelReview(String review, Model model, int stars) {
-        this.review = review;
-        this.model = model;
-        this.stars = stars;
-    }
 
 }

@@ -22,6 +22,14 @@ import lombok.Data;
 @Entity
 @Table(name="photos")
 public class ModelPhoto {
+    
+    public ModelPhoto() {
+    }
+
+    public ModelPhoto(String image, Model model) {
+        this.image = image;
+        this.model = model;
+    }
 
     @Id
     @GeneratedValue
@@ -33,13 +41,5 @@ public class ModelPhoto {
 
     @Column(columnDefinition = "LONGTEXT")
     private String image;
-
-    public ModelPhoto() {
-    }
-
-    public ModelPhoto(String image, Model model) {
-        this.image = image;
-        this.model = model;
-    }
 
 }
