@@ -20,7 +20,7 @@ import lombok.Data;
  */
 @Data
 @Entity
-@Table(name="photos")
+@Table(name="model_photos")
 public class ModelPhoto {
     
     public ModelPhoto() {
