@@ -134,6 +134,7 @@ public class ModelController {
     }
     
     @GetMapping("/bestmodels/{gender}")
+    @Transactional
     public ResponseEntity<List<ModelRequest>> bestModels(@PathVariable String gender) {
         
         List<Model> retrievedModels;
@@ -188,6 +189,7 @@ public class ModelController {
     }
 
     @GetMapping("/premiummodels/{gender}")
+    @Transactional
     public ResponseEntity<List<PremiumModel>> premiumModels(@PathVariable String gender) {
         
         List<PremiumModel> retrievedModels;
@@ -204,6 +206,7 @@ public class ModelController {
     }
     
     @PostMapping("/premiummodel")
+    @Transactional
     public ResponseEntity<PremiumModel> createPremium(@RequestParam("file1") Optional<MultipartFile> file1, String name, String instagram, String twitter, String title, String message, String onlyfansLink, String justForFansLink, String gender){
         PremiumModel premiumModel = new PremiumModel();
         ArrayList<String> linkList = new ArrayList<>();
@@ -232,12 +235,14 @@ public class ModelController {
     }
     
     @GetMapping("/photos")
+    @Transactional
     public List<ModelPhoto> modelsPhotos() {
         List<ModelPhoto> retrieved = modelPhotoRepository.findAll();
         return retrieved;
     }
 
     @GetMapping("/reviews")
+    @Transactional
     public List<ModelReview> modelsReviews() {
         List<ModelReview> retrieved = modelReviewRepository.findAll();
         return retrieved;
@@ -360,6 +365,7 @@ public class ModelController {
     }
 
     @DeleteMapping("/model/{id}")
+    @Transactional
     public ResponseEntity<String> deletePost(@PathVariable Long id) {
         Optional<Model> retrieved = modelRepository.findById(id);
 
@@ -375,6 +381,7 @@ public class ModelController {
     }
 
     @PutMapping("/model/{id}")
+    @Transactional
     public ResponseEntity<String> updatePost(@PathVariable Long id, @Valid @RequestBody Model modelDetails) {
         Optional<Model> retrieved = modelRepository.findById(id);
         Model updated = new Model();
