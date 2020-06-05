@@ -53,6 +53,7 @@ public class ModelController {
     private ModelService service;
 
     @GetMapping("/models")
+    @Transactional
     public ResponseEntity<List<ModelRequest>> models() {
         List<Model> retrievedModels = modelRepository.findAll();
 
@@ -93,6 +94,7 @@ public class ModelController {
     }
     
         @GetMapping("/model/{id}")
+        @Transactional
         public ResponseEntity<ModelRequest> getSingleModel(@PathVariable Long id) {
         Optional<Model> retrievedModel = modelRepository.findById(id);
 
