@@ -368,11 +368,21 @@ public class ModelController {
     @Transactional
     public ResponseEntity<String> deletePost(@PathVariable Long id) {
         Optional<Model> retrieved = modelRepository.findById(id);
-
+        List<ModelPhoto> photos = new ArrayList<>();
+        List<ModelReview> reviews = new ArrayList<>();
         if (!retrieved.isPresent()) {
             return new ResponseEntity<>("Item not found", HttpStatus.NOT_FOUND);
         }
         try {
+            //delete the photos first
+            photos = modelPhotoRepository.findByModel(retrieved.get());
+            modelPhotoRepository.deleteAll(photos);
+            
+            //delete the reviews first
+            reviews = modelReviewRepository.findByModel(retrieved.get());
+            modelReviewRepository.deleteAll(reviews);
+            
+            //then delete the model
             modelRepository.delete(retrieved.get());
         } catch (Exception ex) {
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
