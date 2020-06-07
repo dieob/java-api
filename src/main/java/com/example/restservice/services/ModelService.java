@@ -5,6 +5,7 @@
  */
 package com.example.restservice.services;
 
+import static com.example.restservice.Controllers.UserController.SALT;
 import com.example.restservice.Models.Model;
 import com.example.restservice.Models.ModelPhoto;
 import com.example.restservice.Models.ModelRequest;
@@ -15,8 +16,10 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example.restservice.Repository.ModelReviewRepository;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.core.env.Environment;
 
 /**
  *
@@ -25,7 +28,12 @@ import java.util.List;
 @Service
 @Transactional
 public class ModelService {
+    
+    public static final String MAX_FILE_SIZE = "max.size.file.upload";
 
+    @Autowired
+    private Environment env;
+   
     @Autowired
     ModelRepository modelRepository;
 
