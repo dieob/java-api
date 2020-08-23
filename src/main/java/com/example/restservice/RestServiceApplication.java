@@ -24,6 +24,10 @@ public class RestServiceApplication {
                 registry.addMapping("/posts").allowedOrigins("*");
                 registry.addMapping("/post").allowedOrigins("*");
                 registry.addMapping("/post/{id}").allowedOrigins("*");
+                registry.addMapping("/bestposts/").allowedOrigins("*");
+                registry.addMapping("/allphotos/").allowedOrigins("*");
+                registry.addMapping("/allreviews/").allowedOrigins("*");
+                registry.addMapping("/postreview").allowedOrigins("*");
                 registry.addMapping("/models").allowedOrigins("*");
                 registry.addMapping("/model").allowedOrigins("*");
                 registry.addMapping("/model/{id}").allowedOrigins("*");
@@ -37,11 +41,11 @@ public class RestServiceApplication {
         };
     }
 
-    @Bean
+    /*@Bean
     ApplicationRunner applicationRunner(PostRepository postRepository) {
         return args -> {
             postRepository.save(new Post("Title1", "Desc1", "City1"));
             postRepository.save(new Post("Title2", "Desc2", "City2"));
         };
-    }
+    }*/
 }

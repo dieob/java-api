@@ -1,36 +1,22 @@
 package com.example.restservice.Models;
 
+import java.util.List;
+import lombok.Data;
+
 /**
  *
  * @author Diego Baez
  */
+@Data
 public class PostRequest {
 
-    private String title;
-    private String description;
+    private Long id;
+    private String name;
+    private String instagram;
+    private String twitter;
+    private Double stars;
+    private Double rank;    
+    private List<PostReview> reviewList;
+    private List<String> photoList;
     private String city;
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }   
 }

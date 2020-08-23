@@ -20,15 +20,15 @@ import lombok.Data;
  */
 @Data
 @Entity
-@Table(name="model_photos")
-public class ModelPhoto {
+@Table(name="post_photos")
+public class PostPhoto {
     
-    public ModelPhoto() {
+    public PostPhoto() {
     }
 
-    public ModelPhoto(String image, Model model) {
+    public PostPhoto(String image, Post post) {
         this.image = image;
-        this.model = model;
+        this.post = post;
     }
 
     @Id
@@ -36,8 +36,8 @@ public class ModelPhoto {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "model_id", nullable = false)
-    private Model model;
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
 
     @Lob
     private String image;

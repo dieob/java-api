@@ -5,6 +5,9 @@
  */
 package com.example.restservice.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.Date;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -20,26 +23,34 @@ import lombok.Data;
  */
 @Data
 @Entity
-@Table(name="model_photos")
-public class ModelPhoto {
+@Table (name="post_reviews")
+public class PostReview {
+
+    public PostReview() {
+    }
+
+    public PostReview(String review, Post post, int stars) {
+        this.review = review;
+        this.post = post;
+        this.stars = stars;
+    }
     
-    public ModelPhoto() {
-    }
-
-    public ModelPhoto(String image, Model model) {
-        this.image = image;
-        this.model = model;
-    }
-
     @Id
     @GeneratedValue
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "model_id", nullable = false)
-    private Model model;
+    @JsonIgnore
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
 
-    @Lob
-    private String image;
+   @Lob
+    private String review;
+    
+    @Column
+    private int stars;
+    
+    @Column
+    private Date createdDate;
 
 }
